@@ -1,0 +1,42 @@
+
+<schemalist>
+  <schema id="org.gnome.shell.extensions.lockscreen" path="/org/gnome/shell/extensions/lockscreen/">
+
+    <key name="replace-clock-text" type="s">
+      <default>"Default"</default>
+      <summary>replace_clock_text</summary>
+      <description> </description>
+    </key>
+
+    <key name="replace-date-text" type="s">
+      <default>"Default"</default>
+      <summary>replace_date_text</summary>
+      <description> </description>
+    </key>
+    
+    <key name="clock-format" type="s">
+      <default>""</default>
+      <summary>clock format</summary>
+      <description> </description>
+    </key>
+    
+    <key name="date-format" type="s">
+      <default>"%A %B %-d"</default>
+      <summary>date format</summary>
+      <description> </description>
+    </key>
+    
+    <key name="customize-clock-format" type="b">
+      <default>false</default>
+      <summary>customize clock format</summary>
+      <description> </description>
+    </key>
+    
+    <key name="customize-date-format" type="b">
+      <default>false</default>
+      <summary>customize date format</summary>
+      <description> </description>
+    </key>
+    
+  </schema>
+</schemalist>
