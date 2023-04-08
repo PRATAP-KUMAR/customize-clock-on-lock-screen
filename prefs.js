@@ -46,7 +46,6 @@ class PrefsWidget {
         this.vbox.append(this.customizeDateFormat());
         this.vbox.append(this.adjustDateFormat());
         this.vbox.append(new Gtk.Separator({orientation: Gtk.Orientation.HORIZONTAL, margin_bottom: 5, margin_top: 5}));
-        this.vbox.append(this.customColorButton());
         this.vbox.append(this.addTip());
 
         this.widget.append(this.vbox);
