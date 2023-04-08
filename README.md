@@ -8,8 +8,7 @@ nano $HOME/.local/share/gnome-shell/extensions/CustomizeClockOnLockScreen@pratap
 ````
 Once edited and saved the file, you need to restart gnome-shell to see the changes.
 
-Sometimes, turning off and on the extension will do the trick. You may try this first before restaring gnome-shell.
-
+Sometimes, turning off and on the extension will do the trick. You may try this first before restaring gnome-shell with below methods.  
 Alt+F2 r enter method if you are on `xorg`.  
 If you are on `wayland` you need to logout and login for the changes to effect.
 
