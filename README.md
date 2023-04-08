@@ -6,7 +6,11 @@ You can open the file with `nano` with below command or change `nano` with your 
 ````
 nano $HOME/.local/share/gnome-shell/extensions/CustomizeClockOnLockScreen@pratap.fastmail.fm/stylesheet.css
 ````
-Once edited and saved the file, you need to restart gnome-shell with Alt+F2 r enter method if you are on `xorg`.  
+Once edited and saved the file, you need to restart gnome-shell to see the changes.
+
+Sometimes, turning off and on the extension will do the trick. You may try this first before restaring gnome-shell.
+
+Alt+F2 r enter method if you are on `xorg`.  
 If you are on `wayland` you need to logout and login for the changes to effect.
 
 sample css code
