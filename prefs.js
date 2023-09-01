@@ -1,28 +1,20 @@
-'use strict';
+import Adw from 'gi://Adw';
+import Gtk from 'gi://Gtk';
+import Gdk from 'gi://Gdk';
+import Gio from 'gi://Gio';
 
-const Gtk = imports.gi.Gtk;
-const ExtensionUtils = imports.misc.extensionUtils;
+import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-/**
- *
- */
-function init() {
-}
+export default class CustomizeClockExtensionPreferences extends ExtensionPreferences {
+    fillPreferencesWindow(window) {
+        window._settings = this.getSettings();
+        window._timeColorButton = new Gtk.ColorButton();
+        window._dateColorButton = new Gtk.ColorButton();
 
-/**
- *
- */
-function buildPrefsWidget() {
-    let widget = new PrefsWidget();
-    return widget.widget;
-}
+        setButtonColor(window._timeColorButton, 'time-color');
+        setButtonColor(window._dateColorButton, 'date-color');
 
-class PrefsWidget {
-    constructor() {
-        this._settings = ExtensionUtils.getSettings();
-        this._buttonColor = new Gtk.ColorButton();
-
-        this.widget = new Gtk.Box({
+        window.widget = new Gtk.Box({
             orientation: Gtk.Orientation.VERTICAL,
             margin_top: 10,
             margin_bottom: 10,
@@ -30,167 +22,233 @@ class PrefsWidget {
             margin_end: 10,
         });
 
-        this.vbox = new Gtk.Box({
-            orientation: Gtk.Orientation.VERTICAL,
-            margin_top: 0,
-            hexpand: true,
-        });
-        this.vbox.set_size_request(50, 50);
+        const colorButton = (label, button, id) => {
+            let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5 });
+            let colorLabel = new Gtk.Label({ label, xalign: 0, hexpand: true });
 
-        this.vbox.append(this.replaceClockWithText());
-        this.vbox.append(this.replaceDateWithText());
-        this.vbox.append(new Gtk.Separator({orientation: Gtk.Orientation.HORIZONTAL, margin_bottom: 5, margin_top: 5}));
-        this.vbox.append(this.customizeClockFormatSwitch());
-        this.vbox.append(this.adjustClockFormat());
-        this.vbox.append(new Gtk.Separator({orientation: Gtk.Orientation.HORIZONTAL, margin_bottom: 5, margin_top: 5}));
-        this.vbox.append(this.customizeDateFormat());
-        this.vbox.append(this.adjustDateFormat());
-        this.vbox.append(new Gtk.Separator({orientation: Gtk.Orientation.HORIZONTAL, margin_bottom: 5, margin_top: 5}));
-        this.vbox.append(this.addTip());
+            hbox.append(colorLabel);
+            hbox.append(selectButtonColor(button, id));
+            return hbox;
+        }
 
-        this.widget.append(this.vbox);
-    }
+        const adjustFontSizeTime = () => {
+            let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5 });
+            let fontSizeLabel = new Gtk.Label({ label: 'Adjust Time Font Size (pt)', xalign: 0, hexpand: true });
+            let fontSizeAdjustButton = new Gtk.SpinButton();
+            fontSizeAdjustButton.set_range(24, 96);
+            fontSizeAdjustButton.set_increments(2, 4);
+            fontSizeAdjustButton.set_value(window._settings.get_int('time-size'));
+            fontSizeAdjustButton.connect('value-changed', entry => {
+                window._settings.set_int('time-size', entry.get_value());
+            });
 
-    replaceClockWithText() {
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-        let replaceClockWithTextLabel = new Gtk.Label({label: 'Replace Clock with your Text', xalign: 0, hexpand: true});
-        this.replaceClockWithText_entry = new Gtk.Entry({hexpand: true, margin_start: 20});
-        this.replaceClockWithText_entry.set_placeholder_text('Enter your own text or click on Reset Button to Use System Clock');
+            let resetButton = new Gtk.Button({ margin_start: 5 });
+            resetButton.set_label("Reset to Extensions's Default Value");
+            resetButton.connect('clicked', () => {
+                window._settings.set_int('time-size', 72);
+                fontSizeAdjustButton.set_value(window._settings.get_int('time-size'));
+            });
 
-        this.resetButton = new Gtk.Button({margin_start: 5});
-        this.resetButton.set_label('Reset to System Clock');
-        this.resetButton.connect('clicked', () => {
-            this._settings.set_string('replace-clock-text', 'default');
-            this.replaceClockWithText_entry.set_text(this._settings.get_string('replace-clock-text'));
-        });
+            hbox.append(fontSizeLabel);
+            hbox.append(fontSizeAdjustButton);
+            hbox.append(resetButton);
 
-        this.noTextButton = new Gtk.Button({margin_start: 5});
-        this.noTextButton.set_label('Remove Clock');
-        this.noTextButton.connect('clicked', () => {
-            this._settings.set_string('replace-clock-text', '');
-            this.replaceClockWithText_entry.set_text(this._settings.get_string('replace-clock-text'));
-        });
+            return hbox;
+        };
 
-        this.replaceClockWithText_entry.set_text(this._settings.get_string('replace-clock-text'));
-        this.replaceClockWithText_entry.connect('changed', entry => {
-            this._settings.set_string('replace-clock-text', entry.get_text());
-        });
+        const adjustFontSizeDate = () => {
+            let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5 });
+            let fontSizeLabel = new Gtk.Label({ label: 'Adjust Date Font Size (pt)', xalign: 0, hexpand: true });
+            let fontSizeAdjustButton = new Gtk.SpinButton();
+            fontSizeAdjustButton.set_range(24, 96);
+            fontSizeAdjustButton.set_increments(2, 4);
+            fontSizeAdjustButton.set_value(window._settings.get_int('date-size'));
+            fontSizeAdjustButton.connect('value-changed', entry => {
+                window._settings.set_int('date-size', entry.get_value());
+            });
 
-        hbox.append(replaceClockWithTextLabel);
-        hbox.append(this.replaceClockWithText_entry);
-        hbox.append(this.resetButton);
-        hbox.append(this.noTextButton);
-        return hbox;
-    }
+            let resetButton = new Gtk.Button({ margin_start: 5 });
+            resetButton.set_label("Reset to Extensions's Default Value");
+            resetButton.connect('clicked', () => {
+                window._settings.set_int('date-size', 24);
+                fontSizeAdjustButton.set_value(window._settings.get_int('date-size'));
+            });
 
-    replaceDateWithText() {
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-        let replaceDateWithTextLabel = new Gtk.Label({label: 'Replace Date with your Text', xalign: 0, hexpand: true});
-        this.replaceDateWithText_entry = new Gtk.Entry({hexpand: true, margin_start: 20});
-        this.replaceDateWithText_entry.set_placeholder_text('Enter your own text or click on Reset Button to Use System Date');
+            hbox.append(fontSizeLabel);
+            hbox.append(fontSizeAdjustButton);
+            hbox.append(resetButton);
 
-        this.resetButton = new Gtk.Button({margin_start: 5});
-        this.resetButton.set_label('Reset to System Date');
-        this.resetButton.connect('clicked', () => {
-            this._settings.set_string('replace-date-text', 'default');
-            this.replaceDateWithText_entry.set_text(this._settings.get_string('replace-date-text'));
-        });
+            return hbox;
+        };
 
-        this.noTextButton = new Gtk.Button({margin_start: 5});
-        this.noTextButton.set_label('Remove Date');
-        this.noTextButton.connect('clicked', () => {
-            this._settings.set_string('replace-date-text', '');
-            this.replaceDateWithText_entry.set_text(this._settings.get_string('replace-date-text'));
-        });
+        const customTimeText = () => {
+            let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5 });
+            let label = new Gtk.Label({ label: 'Custom Time Text', xalign: 0, hexpand: true });
+            let textUrlEntry = new Gtk.Entry({ margin_start: 5 });
+            textUrlEntry.set_width_chars(60);
+            textUrlEntry.set_placeholder_text('write your own text or use web link below for custom format');
 
-        this.replaceDateWithText_entry.set_text(this._settings.get_string('replace-date-text'));
-        this.replaceDateWithText_entry.connect('changed', entry => {
-            this._settings.set_string('replace-date-text', entry.get_text());
-        });
+            textUrlEntry.set_text(window._settings.get_string('custom-clock-text'));
+            textUrlEntry.connect('changed', entry => {
+                window._settings.set_string('custom-clock-text', entry.get_text());
+            });
 
-        hbox.append(replaceDateWithTextLabel);
-        hbox.append(this.replaceDateWithText_entry);
-        hbox.append(this.resetButton);
-        hbox.append(this.noTextButton);
+            hbox.append(label);
+            hbox.append(textUrlEntry);
 
-        return hbox;
-    }
+            return hbox;
+        };
 
-    customizeClockFormatSwitch() {
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-        let cCFLabel = new Gtk.Label({label: "Turn on to customize clock format (Effective only if 'Reset to System Clock' Button above is Clicked)", xalign: 0, hexpand: true});
-        this.cCF_switch = new Gtk.Switch({active: this._settings.get_boolean('customize-clock-format')});
-        this.cCF_switch.connect('notify::active', button => {
-            this._settings.set_boolean('customize-clock-format', button.active);
-        });
+        const customDateText = () => {
+            let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5 });
+            let label = new Gtk.Label({ label: 'Custom Date Text', xalign: 0, hexpand: true });
+            let textUrlEntry = new Gtk.Entry({ margin_start: 5 });
+            textUrlEntry.set_width_chars(60);
+            textUrlEntry.set_placeholder_text('write your own text or use web link below for custom format');
 
-        hbox.append(cCFLabel);
-        hbox.append(this.cCF_switch);
-        return hbox;
-    }
+            textUrlEntry.set_text(window._settings.get_string('custom-date-text'));
+            textUrlEntry.connect('changed', entry => {
+                window._settings.set_string('custom-date-text', entry.get_text());
+            });
 
-    _test() {
-        let boolean = this._settings.get_boolean('customize-clock-format');
-        if (boolean)
-            this._settings.set_string('replace-clock-text', 'default'); else
-            this._settings.set_string('clock-format', '');
-    }
+            hbox.append(label);
+            hbox.append(textUrlEntry);
 
-    adjustClockFormat() {
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-        let clockFormatLabel = new Gtk.Label({label: 'Enter Valid Date/Time Format Codes', xalign: 0, hexpand: true});
-        this.clockFormatEntry = new Gtk.Entry({hexpand: true, margin_start: 20});
-        this.clockFormatEntry.set_placeholder_text('Enter Valid Date/Time Format Codes');
+            return hbox;
+        };
 
-        this.clockFormatEntry.set_text(this._settings.get_string('clock-format'));
-        this.clockFormatEntry.connect('changed', entry => {
-            this._settings.set_string('clock-format', entry.get_text());
+        const addTip = () => {
+            let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5 });
+            let url = 'https://help.gnome.org/users/gthumb/stable/gthumb-date-formats.html.en';
+            let linkButton = Gtk.LinkButton.new_with_label(url, 'web link for valid Date/Time Format Codes');
+
+            hbox.append(linkButton);
+
+            return hbox;
+        }
+
+        const customStyling = new Adw.SwitchRow({
+            title: 'Custom Styling',
         });
 
-        hbox.append(clockFormatLabel);
-        hbox.append(this.clockFormatEntry);
-
-        return hbox;
-    }
-
-    customizeDateFormat() {
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-        let cDFLabel = new Gtk.Label({label: "Turn on to customize date format (Effective only if 'Reset to System Date' Button above is Clicked)", xalign: 0, hexpand: true});
-        this.cDF_switch = new Gtk.Switch({active: this._settings.get_boolean('customize-date-format')});
-        this.cDF_switch.connect('notify::active', button => {
-            this._settings.set_boolean('customize-date-format', button.active);
+        const removeTime = new Adw.SwitchRow({
+            title: 'Remove Time',
         });
 
-        hbox.append(cDFLabel);
-        hbox.append(this.cDF_switch);
-        return hbox;
-    }
-
-    adjustDateFormat() {
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-        let dateFormatLabel = new Gtk.Label({label: 'Enter Valid Date/Time Format Codes', xalign: 0, hexpand: true});
-        this.dateFormat_entry = new Gtk.Entry({hexpand: true, margin_start: 20});
-        this.dateFormat_entry.set_placeholder_text('Enter Valid Date/Time Format Codes');
-
-        this.dateFormat_entry.set_text(this._settings.get_string('date-format'));
-        this.dateFormat_entry.connect('changed', entry => {
-            this._settings.set_string('date-format', entry.get_text());
+        const removeDate = new Adw.SwitchRow({
+            title: 'Remove Date',
         });
 
-        hbox.append(dateFormatLabel);
-        hbox.append(this.dateFormat_entry);
+        const removeHint = new Adw.SwitchRow({
+            title: 'Remove Hint',
+        });
 
-        return hbox;
-    }
+        const page = new Adw.PreferencesPage();
+        window.add(page);
 
-    addTip() {
-        let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-        let url = 'https://help.gnome.org/users/gthumb/stable/gthumb-date-formats.html.en';
-        this.linkButton = Gtk.LinkButton.new_with_label(url, 'web link for valid Date/Time Format Codes');
+        const customStyleGroup = new Adw.PreferencesGroup({
+            title: 'Custom Styling'
+        });
+        page.add(customStyleGroup);
 
-        hbox.append(this.linkButton);
+        const customTextGroup = new Adw.PreferencesGroup({
+            title: 'Custom Text Options',
+            description: 'either use gnome date time text format or type your preferred text or leave blank for default values'
+        })
+        page.add(customTextGroup)
 
-        return hbox;
+        const group = new Adw.PreferencesGroup({
+            title: 'Remove Options'
+        })
+        page.add(group)
+
+        group.add(removeTime);
+        group.add(removeDate);
+        group.add(removeHint);
+
+        customStyleGroup.add(customStyling);
+        customStyleGroup.add(colorButton('Time Color', window._timeColorButton, 'time-color'));
+        customStyleGroup.add(colorButton('Date Color', window._dateColorButton, 'date-color'));
+        customStyleGroup.add(adjustFontSizeTime());
+        customStyleGroup.add(adjustFontSizeDate());
+
+        customTextGroup.add(customTimeText());
+        customTextGroup.add(customDateText());
+        customTextGroup.add(addTip())
+
+        window._settings.bind('custom-style', customStyling, 'active', Gio.SettingsBindFlags.DEFAULT);
+        window._settings.bind('remove-time', removeTime, 'active', Gio.SettingsBindFlags.DEFAULT);
+        window._settings.bind('remove-date', removeDate, 'active', Gio.SettingsBindFlags.DEFAULT);
+        window._settings.bind('remove-hint', removeHint, 'active', Gio.SettingsBindFlags.DEFAULT);
+
+        // helper functions
+
+        /**
+         *
+         * @param {string} button button
+         * @param {string} id id
+         */
+        function setButtonColor(button, id) {
+            let rgba = new Gdk.RGBA();
+            let hexString = window._settings.get_string(id);
+            rgba.parse(hexString);
+            button.set_rgba(rgba);
+        }
+
+        /**
+         *
+         * @param {string} button 'button'
+         * @param {string} id 'id'
+         */
+        function selectButtonColor(button, id) {
+            let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5, halign: Gtk.Align.END });
+            button.connect('notify::rgba', () => onPanelColorChanged(button, id));
+            hbox.append(button);
+
+            return hbox;
+        }
+
+        /**
+         *
+         * @param {string } button 'button'
+         * @param {string} id 'id'
+         */
+        function onPanelColorChanged(button, id) {
+            let rgba = button.get_rgba();
+            let css = rgba.to_string();
+            let hexString = cssHexString(css);
+            window._settings.set_string(id, hexString);
+        }
+
+        /**
+         *
+         * @param {string} css 'css'
+         */
+        function cssHexString(css) {
+            let rrggbb = '#';
+            let start;
+            for (let loop = 0; loop < 3; loop++) {
+                let end = 0;
+                let xx = '';
+                for (let loop1 = 0; loop1 < 2; loop1++) {
+                    while (true) {
+                        let x = css.slice(end, end + 1);
+                        if (x === '(' || x === ',' || x === ')')
+                            break;
+                        end += 1;
+                    }
+                    if (loop1 === 0) {
+                        end += 1;
+                        start = end;
+                    }
+                }
+                xx = parseInt(css.slice(start, end)).toString(16);
+                if (xx.length === 1)
+                    xx = `0${xx}`;
+                rrggbb += xx;
+                css = css.slice(end);
+            }
+            return rrggbb;
+        }
     }
 }
-

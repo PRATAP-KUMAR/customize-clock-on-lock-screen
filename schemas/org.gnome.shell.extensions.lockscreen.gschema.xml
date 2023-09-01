@@ -1,46 +1,76 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.lockscreen" path="/org/gnome/shell/extensions/lockscreen/">
-
-    <key name="replace-clock-text" type="s">
-      <default>"default"</default>
-      <summary>replace_clock_text</summary>
-      <description></description>
-    </key>
-
-    <key name="replace-date-text" type="s">
-      <default>"default"</default>
-      <summary>replace_date_text</summary>
-      <description></description>
-    </key>
-
-    <key name="clock-format" type="s">
-      <default>""</default>
-      <summary>clock format</summary>
-      <description></description>
-    </key>
-
-    <key name="date-format" type="s">
-      <default>"%A %B %-d"</default>
-      <summary>date format</summary>
-      <description></description>
-    </key>
-
-    <key name="customize-clock-format" type="b">
-      <default>false</default>
+    <key name="custom-clock-text" type="s">
+      <default>''</default>
       <summary>customize clock format</summary>
       <description></description>
     </key>
 
-    <key name="customize-date-format" type="b">
-      <default>false</default>
+    <key name="custom-date-text" type="s">
+      <default>''</default>
       <summary>customize date format</summary>
       <description></description>
     </key>
 
-    <key name="use-custom-color" type="b">
+    <key name="custom-style" type="b">
+      <default>true</default>
+      <summary>customize style</summary>
+      <description></description>
+    </key>
+
+    <key name="remove-time" type="b">
       <default>false</default>
-      <summary>Turn ON if you wish to use Custom Color.</summary>
-      <description>Custom Color</description>
+      <summary>Remove Time</summary>
+      <description></description>
+    </key>
+
+    <key name="remove-date" type="b">
+      <default>false</default>
+      <summary>Remove Date</summary>
+      <description></description>
+    </key>
+
+    <key name="remove-hint" type="b">
+      <default>false</default>
+      <summary>Remove Hint</summary>
+      <description></description>
+    </key>
+
+    <key name="time-custom-format" type="b">
+      <default>false</default>
+      <summary>Time Custom Format</summary>
+      <description></description>
+    </key>
+
+    <key name="date-custom-format" type="b">
+      <default>false</default>
+      <summary>Date Custom Format</summary>
+      <description></description>
+    </key>
+
+
+    <key name="time-color" type="s">
+      <default>"#456789"</default>
+      <summary>time-color</summary>
+      <description></description>
+    </key>
+
+    <key name="time-size" type="i">
+      <default>72</default>
+      <summary>time-font-size</summary>
+      <description></description>
+    </key>
+
+    <key name="date-color" type="s">
+      <default>"#456789"</default>
+      <summary>date-color</summary>
+      <description></description>
+    </key>
+
+    <key name="date-size" type="i">
+      <default>24</default>
+      <summary>date-font-size</summary>
+      <description></description>
     </key>
 
   </schema>
