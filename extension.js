@@ -1,26 +1,27 @@
-import { Extension, InjectionManager } from 'resource:///org/gnome/shell/extensions/extension.js';
-import * as UnlockDialog from 'resource:///org/gnome/shell/ui/unlockDialog.js';
-import ModifiedClock from './ModifiedClock.js';
-// import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
-export default class CustomizeClockOnLockScreenExtension extends Extension {
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import ModifiedClock from './ModifiedClock.js';
+
+export default class IndicatorExampleExtension extends Extension {
     enable() {
-        this._injectionManager = new InjectionManager();
-        this._injectionManager.overrideMethod(UnlockDialog.UnlockDialog.prototype, '_init',
-            originalMethod => {
-                const settings = this.getSettings();
-                return function (...args) {
-                    originalMethod.call(this, ...args);
-                    this._stack.remove_child(this._clock);
-                    this._clock = new ModifiedClock(settings);
-                    this._clock.set_pivot_point(0.5, 0.5);
-                    this._stack.add_child(this._clock);
-                }
-            })
+        this._settings = this.getSettings();
+        this._dialog = Main.screenShield._dialog;
+        const disable = this._settings.get_boolean('disable-extension');
+        if (this._dialog && !disable) {
+            this._dialog._stack.remove_child(this._dialog._clock);
+            this._dialog._clock = new ModifiedClock(this._settings);
+            this._dialog._clock.set_pivot_point(0.5, 0.5);
+            this._dialog._stack.add_child(this._dialog._clock);
+        }
     }
 
+    // unlock-dialog is used in session-modes because this extension purpose is
+    // to tweak the clock on lock screen itself.
     disable() {
-        this._injectionManager.clear();
-        this._injectionManager = null;
+        this._dialog._clock.destroy();
+        this._dialog._clock = null;
+        this._dialog = null;
+        this._settings = null;
     }
 }

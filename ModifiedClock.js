@@ -4,8 +4,10 @@ import GnomeDesktop from 'gi://GnomeDesktop';
 import Clutter from 'gi://Clutter';
 import Shell from 'gi://Shell';
 
-import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import { formatDateWithCFormatString } from 'resource:///org/gnome/shell/misc/dateUtils.js';
+
+const HINT_TIMEOUT = 4;
+const CROSSFADE_TIME = 300;
 
 const ModifiedClock = GObject.registerClass(
     class ModifiedClock extends St.BoxLayout {
@@ -47,6 +49,14 @@ const ModifiedClock = GObject.registerClass(
                 opacity: 0,
             });
 
+            customStyle
+                ? this._hint.set_style
+                    (
+                        `color: ${this._settings.get_string('hint-color')};
+                        font-size: ${this._settings.get_int('hint-size')}pt`
+                    )
+                : null;
+
             const removeTime = this._settings.get_boolean('remove-time');
             const removeDate = this._settings.get_boolean('remove-date');
             const removeHint = this._settings.get_boolean('remove-hint');
@@ -67,10 +77,10 @@ const ModifiedClock = GObject.registerClass(
                 () => (this._hint.opacity = 0), this);
 
             this._idleMonitor = global.backend.get_core_idle_monitor();
-            this._idleWatchId = this._idleMonitor.add_idle_watch(1 * 1000, () => {
+            this._idleWatchId = this._idleMonitor.add_idle_watch(HINT_TIMEOUT * 1000, () => {
                 this._hint.ease({
                     opacity: 255,
-                    duration: 300,
+                    duration: CROSSFADE_TIME,
                 });
             });
 
@@ -82,7 +92,7 @@ const ModifiedClock = GObject.registerClass(
             let date = new Date();
             let dateFormat = Shell.util_translate_time_string('%A %B %-d');
 
-            let customizeClock = this._settings.get_string('custom-clock-text');
+            let customizeClock = this._settings.get_string('custom-time-text');
             let customizeDate = this._settings.get_string('custom-date-text');
 
             let timeFormat = Shell.util_translate_time_string(customizeClock);
@@ -110,7 +120,6 @@ const ModifiedClock = GObject.registerClass(
         }
 
         _onDestroy() {
-            this._wallClock.run_dispose();
             this._idleMonitor.remove_watch(this._idleWatchId);
         }
     }

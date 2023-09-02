@@ -1,6 +1,6 @@
 <schemalist>
-  <schema id="org.gnome.shell.extensions.lockscreen" path="/org/gnome/shell/extensions/lockscreen/">
-    <key name="custom-clock-text" type="s">
+  <schema id="org.gnome.shell.extensions.customize-clock-on-lockscreen" path="/org/gnome/shell/extensions/customize-clock-on-lockscreen/">
+    <key name="custom-time-text" type="s">
       <default>''</default>
       <summary>customize clock format</summary>
       <description></description>
@@ -48,7 +48,6 @@
       <description></description>
     </key>
 
-
     <key name="time-color" type="s">
       <default>"#456789"</default>
       <summary>time-color</summary>
@@ -70,6 +69,24 @@
     <key name="date-size" type="i">
       <default>24</default>
       <summary>date-font-size</summary>
+      <description></description>
+    </key>
+
+    <key name="hint-color" type="s">
+      <default>"#456789"</default>
+      <summary>hint-color</summary>
+      <description></description>
+    </key>
+
+    <key name="hint-size" type="i">
+      <default>12</default>
+      <summary>hint-font-size</summary>
+      <description></description>
+    </key>
+
+    <key name="disable-extension" type="b">
+      <default>false</default>
+      <summary>Disable this extension</summary>
       <description></description>
     </key>
 
