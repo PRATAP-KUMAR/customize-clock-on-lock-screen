@@ -24,7 +24,7 @@ const ModifiedClock = GObject.registerClass(
 
             this._time.set_style(customStyle
                 ? `color: ${this._settings.get_string('time-color')};
-                        font-size: ${this._settings.get_int('time-size')}pt`
+                        font-size: ${this._settings.get_int('time-size')}px`
                 : null
             );
 
@@ -35,7 +35,7 @@ const ModifiedClock = GObject.registerClass(
 
             this._date.set_style(customStyle
                 ? `color: ${this._settings.get_string('date-color')};
-                        font-size: ${this._settings.get_int('date-size')}pt`
+                        font-size: ${this._settings.get_int('date-size')}px`
                 : null
             );
 
@@ -48,7 +48,7 @@ const ModifiedClock = GObject.registerClass(
             this._hint.set_style(
                 customStyle
                     ? `color: ${this._settings.get_string('hint-color')};
-                        font-size: ${this._settings.get_int('hint-size')}pt`
+                        font-size: ${this._settings.get_int('hint-size')}px`
                     : null
             );
 

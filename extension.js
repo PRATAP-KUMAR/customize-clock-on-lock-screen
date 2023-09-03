@@ -8,8 +8,7 @@ export default class CustomizeClockOnLockScreenExtension extends Extension {
         this._settings = this.getSettings();
         this._dialog = Main.screenShield._dialog;
         this._originalClock = this._dialog._clock;
-        const disable = this._settings.get_boolean('disable-extension');
-        if (this._dialog && !disable) {
+        if (this._dialog) {
             this._dialog._stack.remove_child(this._dialog._clock);
             this._dialog._clock = new ModifiedClock(this._settings);
             this._dialog._clock.set_pivot_point(0.5, 0.5);

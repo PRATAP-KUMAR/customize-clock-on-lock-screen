@@ -1,5 +1,48 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.customize-clock-on-lockscreen" path="/org/gnome/shell/extensions/customize-clock-on-lockscreen/">
+
+    <key name="custom-style" type="b">
+      <default>true</default>
+      <summary>customize style</summary>
+      <description></description>
+    </key>
+
+    <key name="time-color" type="s">
+      <default>"#456789"</default>
+      <summary>time-color</summary>
+      <description></description>
+    </key>
+
+    <key name="date-color" type="s">
+      <default>"#456789"</default>
+      <summary>date-color</summary>
+      <description></description>
+    </key>
+
+    <key name="hint-color" type="s">
+      <default>"#456789"</default>
+      <summary>hint-color</summary>
+      <description></description>
+    </key>
+
+    <key name="time-size" type="i">
+      <default>72</default>
+      <summary>time-font-size</summary>
+      <description></description>
+    </key>
+
+    <key name="date-size" type="i">
+      <default>24</default>
+      <summary>date-font-size</summary>
+      <description></description>
+    </key>
+
+    <key name="hint-size" type="i">
+      <default>12</default>
+      <summary>hint-font-size</summary>
+      <description></description>
+    </key>
+
     <key name="custom-time-text" type="s">
       <default>''</default>
       <summary>customize clock format</summary>
@@ -9,12 +52,6 @@
     <key name="custom-date-text" type="s">
       <default>''</default>
       <summary>customize date format</summary>
-      <description></description>
-    </key>
-
-    <key name="custom-style" type="b">
-      <default>true</default>
-      <summary>customize style</summary>
       <description></description>
     </key>
 
@@ -33,60 +70,6 @@
     <key name="remove-hint" type="b">
       <default>false</default>
       <summary>Remove Hint</summary>
-      <description></description>
-    </key>
-
-    <key name="time-custom-format" type="b">
-      <default>false</default>
-      <summary>Time Custom Format</summary>
-      <description></description>
-    </key>
-
-    <key name="date-custom-format" type="b">
-      <default>false</default>
-      <summary>Date Custom Format</summary>
-      <description></description>
-    </key>
-
-    <key name="time-color" type="s">
-      <default>"#456789"</default>
-      <summary>time-color</summary>
-      <description></description>
-    </key>
-
-    <key name="time-size" type="i">
-      <default>72</default>
-      <summary>time-font-size</summary>
-      <description></description>
-    </key>
-
-    <key name="date-color" type="s">
-      <default>"#456789"</default>
-      <summary>date-color</summary>
-      <description></description>
-    </key>
-
-    <key name="date-size" type="i">
-      <default>24</default>
-      <summary>date-font-size</summary>
-      <description></description>
-    </key>
-
-    <key name="hint-color" type="s">
-      <default>"#456789"</default>
-      <summary>hint-color</summary>
-      <description></description>
-    </key>
-
-    <key name="hint-size" type="i">
-      <default>12</default>
-      <summary>hint-font-size</summary>
-      <description></description>
-    </key>
-
-    <key name="disable-extension" type="b">
-      <default>false</default>
-      <summary>Disable this extension</summary>
       <description></description>
     </key>
 

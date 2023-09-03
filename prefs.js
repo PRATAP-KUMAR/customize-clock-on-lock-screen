@@ -16,103 +16,58 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         setButtonColor(window._dateColorButton, 'date-color');
         setButtonColor(window._hintColorButton, 'hint-color');
 
-        window.widget = new Gtk.Box({
-            orientation: Gtk.Orientation.VERTICAL,
-            margin_top: 10,
-            margin_bottom: 10,
-            margin_start: 10,
-            margin_end: 10,
-        });
-
-        const colorButton = (label, button, id) => {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-            let colorLabel = new Gtk.Label({label, xalign: 0, hexpand: true});
-
-            hbox.append(colorLabel);
-            hbox.append(selectButtonColor(button, id));
-            return hbox;
+        const colorButton = (button, id) => {
+            return selectButtonColor(button, id);
         };
 
-        const adjustFontSizeTime = () => {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-            let fontSizeLabel = new Gtk.Label({label: 'Adjust Time Font Size (pt)', xalign: 0, hexpand: true});
+        const myAdjustFontSizeTime = () => {
             let fontSizeAdjustButton = new Gtk.SpinButton();
-            fontSizeAdjustButton.set_range(24, 96);
+            fontSizeAdjustButton.set_range(36, 96);
             fontSizeAdjustButton.set_increments(2, 4);
             fontSizeAdjustButton.set_value(window._settings.get_int('time-size'));
             fontSizeAdjustButton.connect('value-changed', entry => {
                 window._settings.set_int('time-size', entry.get_value());
             });
 
-            let resetButton = new Gtk.Button({margin_start: 5});
-            resetButton.set_label("Reset to Extensions's Default Value");
-            resetButton.connect('clicked', () => {
-                window._settings.set_int('time-size', 72);
-                fontSizeAdjustButton.set_value(window._settings.get_int('time-size'));
-            });
-
-            hbox.append(fontSizeLabel);
-            hbox.append(fontSizeAdjustButton);
-            hbox.append(resetButton);
-
-            return hbox;
+            return fontSizeAdjustButton;
         };
 
-        const adjustFontSizeDate = () => {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-            let fontSizeLabel = new Gtk.Label({label: 'Adjust Date Font Size (pt)', xalign: 0, hexpand: true});
+        const myAdjustFontSizeDate = () => {
             let fontSizeAdjustButton = new Gtk.SpinButton();
-            fontSizeAdjustButton.set_range(24, 96);
+            fontSizeAdjustButton.set_range(36, 96);
             fontSizeAdjustButton.set_increments(2, 4);
             fontSizeAdjustButton.set_value(window._settings.get_int('date-size'));
             fontSizeAdjustButton.connect('value-changed', entry => {
                 window._settings.set_int('date-size', entry.get_value());
             });
 
-            let resetButton = new Gtk.Button({margin_start: 5});
-            resetButton.set_label("Reset to Extensions's Default Value");
-            resetButton.connect('clicked', () => {
-                window._settings.set_int('date-size', 24);
-                fontSizeAdjustButton.set_value(window._settings.get_int('date-size'));
-            });
-
-            hbox.append(fontSizeLabel);
-            hbox.append(fontSizeAdjustButton);
-            hbox.append(resetButton);
-
-            return hbox;
+            return fontSizeAdjustButton;
         };
 
-        const adjustFontSizeHint = () => {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-            let fontSizeLabel = new Gtk.Label({label: 'Adjust Hint Font Size (pt)', xalign: 0, hexpand: true});
+        const myAdjustFontSizeHint = () => {
             let fontSizeAdjustButton = new Gtk.SpinButton();
-            fontSizeAdjustButton.set_range(12, 96);
+            fontSizeAdjustButton.set_range(24, 96);
             fontSizeAdjustButton.set_increments(2, 4);
             fontSizeAdjustButton.set_value(window._settings.get_int('hint-size'));
             fontSizeAdjustButton.connect('value-changed', entry => {
                 window._settings.set_int('hint-size', entry.get_value());
             });
 
-            let resetButton = new Gtk.Button({margin_start: 5});
-            resetButton.set_label("Reset to Extensions's Default Value");
-            resetButton.connect('clicked', () => {
-                window._settings.set_int('hint-size', 12);
-                fontSizeAdjustButton.set_value(window._settings.get_int('hint-size'));
-            });
-
-            hbox.append(fontSizeLabel);
-            hbox.append(fontSizeAdjustButton);
-            hbox.append(resetButton);
-
-            return hbox;
+            return fontSizeAdjustButton;
         };
 
-        const customTimeText = () => {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-            let label = new Gtk.Label({label: 'Custom Time Text', xalign: 0, hexpand: true});
-            let textUrlEntry = new Gtk.Entry({margin_start: 5});
-            textUrlEntry.set_width_chars(60);
+        // const myResetFontSize = () => {
+        //     let resetButton = new Gtk.Button();
+        //     resetButton.set_label("Reset");
+        //     resetButton.connect('clicked', () => {
+        //         window._settings.set_int('date-size', 24);
+        //         fontSizeAdjustButton.set_value(window._settings.get_int('date-size'));
+        //     });
+        // }
+
+        const myCustomTimeText = () => {
+            let textUrlEntry = new Gtk.Entry();
+            textUrlEntry.set_width_chars(40);
             textUrlEntry.set_placeholder_text('ex: %r - Foo Bar or Hello World');
 
             textUrlEntry.set_text(window._settings.get_string('custom-time-text'));
@@ -120,32 +75,24 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
                 window._settings.set_string('custom-time-text', entry.get_text());
             });
 
-            hbox.append(label);
-            hbox.append(textUrlEntry);
-
-            return hbox;
+            return textUrlEntry;
         };
 
-        const customDateText = () => {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
-            let label = new Gtk.Label({label: 'Custom Date Text', xalign: 0, hexpand: true});
-            let textUrlEntry = new Gtk.Entry({margin_start: 5});
-            textUrlEntry.set_width_chars(60);
-            textUrlEntry.set_placeholder_text('ex: %x - Foo Bar or Hello World');
+        const myCustomDateText = () => {
+            let textUrlEntry = new Gtk.Entry();
+            textUrlEntry.set_width_chars(40);
+            textUrlEntry.set_placeholder_text('ex: %r - Foo Bar or Hello World');
 
             textUrlEntry.set_text(window._settings.get_string('custom-date-text'));
             textUrlEntry.connect('changed', entry => {
                 window._settings.set_string('custom-date-text', entry.get_text());
             });
 
-            hbox.append(label);
-            hbox.append(textUrlEntry);
-
-            return hbox;
+            return textUrlEntry;
         };
 
         const addTip = () => {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5});
+            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL});
             let url = 'https://help.gnome.org/users/gthumb/stable/gthumb-date-formats.html.en';
             let linkButton = Gtk.LinkButton.new_with_label(url, 'Web link for valid Date/Time Format Codes');
 
@@ -155,8 +102,48 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         };
 
         const customStyling = new Adw.SwitchRow({
-            title: 'Custom Styling',
+            title: 'Apply below custom styling',
         });
+
+        const timeColorRow = new Adw.ActionRow({
+            title: 'Time font color',
+        });
+        timeColorRow.add_suffix(colorButton(window._timeColorButton, 'time-color'));
+
+        const dateColorRow = new Adw.ActionRow({
+            title: 'Date font color',
+        });
+        dateColorRow.add_suffix(colorButton(window._dateColorButton, 'date-color'));
+
+        const hintColorRow = new Adw.ActionRow({
+            title: 'Hint font color',
+        });
+        hintColorRow.add_suffix(colorButton(window._hintColorButton, 'hint-color'));
+
+        const timeFontSizeRow = new Adw.ActionRow({
+            title: 'Time Size in Pixels',
+        });
+        timeFontSizeRow.add_suffix(myAdjustFontSizeTime());
+
+        const dateFontSizeRow = new Adw.ActionRow({
+            title: 'Date Size in Pixels',
+        });
+        dateFontSizeRow.add_suffix(myAdjustFontSizeDate());
+
+        const hintFontSizeRow = new Adw.ActionRow({
+            title: 'Hint Size in Pixels',
+        });
+        hintFontSizeRow.add_suffix(myAdjustFontSizeHint());
+
+        const customTimeText = new Adw.ActionRow({
+            title: 'Custom Time Text',
+        });
+        customTimeText.add_suffix(myCustomTimeText());
+
+        const customDateText = new Adw.ActionRow({
+            title: 'Custom Date Text',
+        });
+        customDateText.add_suffix(myCustomDateText());
 
         const removeTime = new Adw.SwitchRow({
             title: 'Remove Time',
@@ -168,10 +155,6 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
 
         const removeHint = new Adw.SwitchRow({
             title: 'Remove Hint',
-        });
-
-        const disableExtension = new Adw.SwitchRow({
-            title: 'Disable this Extension',
         });
 
         const page = new Adw.PreferencesPage();
@@ -196,25 +179,23 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         group.add(removeTime);
         group.add(removeDate);
         group.add(removeHint);
-        group.add(disableExtension);
 
         customStyleGroup.add(customStyling);
-        customStyleGroup.add(colorButton('Time Color', window._timeColorButton, 'time-color'));
-        customStyleGroup.add(colorButton('Date Color', window._dateColorButton, 'date-color'));
-        customStyleGroup.add(colorButton('Hint Color', window._hintColorButton, 'hint-color'));
-        customStyleGroup.add(adjustFontSizeTime());
-        customStyleGroup.add(adjustFontSizeDate());
-        customStyleGroup.add(adjustFontSizeHint());
+        customStyleGroup.add(timeColorRow);
+        customStyleGroup.add(dateColorRow);
+        customStyleGroup.add(hintColorRow);
+        customStyleGroup.add(timeFontSizeRow);
+        customStyleGroup.add(dateFontSizeRow);
+        customStyleGroup.add(hintFontSizeRow);
 
-        customTextGroup.add(customTimeText());
-        customTextGroup.add(customDateText());
+        customTextGroup.add(customTimeText);
+        customTextGroup.add(customDateText);
         customTextGroup.add(addTip());
 
         window._settings.bind('custom-style', customStyling, 'active', Gio.SettingsBindFlags.DEFAULT);
         window._settings.bind('remove-time', removeTime, 'active', Gio.SettingsBindFlags.DEFAULT);
         window._settings.bind('remove-date', removeDate, 'active', Gio.SettingsBindFlags.DEFAULT);
         window._settings.bind('remove-hint', removeHint, 'active', Gio.SettingsBindFlags.DEFAULT);
-        window._settings.bind('disable-extension', disableExtension, 'active', Gio.SettingsBindFlags.DEFAULT);
 
         window.maximize();
 
@@ -238,7 +219,7 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
          * @param {string} id 'id'
          */
         function selectButtonColor(button, id) {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, margin_top: 5, halign: Gtk.Align.END});
+            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, halign: Gtk.Align.END});
             button.connect('notify::rgba', () => onPanelColorChanged(button, id));
             hbox.append(button);
 
