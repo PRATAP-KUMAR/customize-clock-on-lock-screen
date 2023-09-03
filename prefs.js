@@ -5,6 +5,10 @@ import Gio from 'gi://Gio';
 
 import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
+let fontSizeTimeAdjustButton;
+let fontSizeDateAdjustButton;
+let fontSizeHintAdjustButton;
+
 export default class CustomizeClockExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         window._settings = this.getSettings();
@@ -21,39 +25,39 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         };
 
         const myAdjustFontSizeTime = () => {
-            let fontSizeAdjustButton = new Gtk.SpinButton();
-            fontSizeAdjustButton.set_range(36, 96);
-            fontSizeAdjustButton.set_increments(2, 4);
-            fontSizeAdjustButton.set_value(window._settings.get_int('time-size'));
-            fontSizeAdjustButton.connect('value-changed', entry => {
+            fontSizeTimeAdjustButton = new Gtk.SpinButton();
+            fontSizeTimeAdjustButton.set_range(36, 96);
+            fontSizeTimeAdjustButton.set_increments(2, 4);
+            fontSizeTimeAdjustButton.set_value(window._settings.get_int('time-size'));
+            fontSizeTimeAdjustButton.connect('value-changed', entry => {
                 window._settings.set_int('time-size', entry.get_value());
             });
 
-            return fontSizeAdjustButton;
+            return fontSizeTimeAdjustButton;
         };
 
         const myAdjustFontSizeDate = () => {
-            let fontSizeAdjustButton = new Gtk.SpinButton();
-            fontSizeAdjustButton.set_range(36, 96);
-            fontSizeAdjustButton.set_increments(2, 4);
-            fontSizeAdjustButton.set_value(window._settings.get_int('date-size'));
-            fontSizeAdjustButton.connect('value-changed', entry => {
+            fontSizeDateAdjustButton = new Gtk.SpinButton();
+            fontSizeDateAdjustButton.set_range(36, 96);
+            fontSizeDateAdjustButton.set_increments(2, 4);
+            fontSizeDateAdjustButton.set_value(window._settings.get_int('date-size'));
+            fontSizeDateAdjustButton.connect('value-changed', entry => {
                 window._settings.set_int('date-size', entry.get_value());
             });
 
-            return fontSizeAdjustButton;
+            return fontSizeDateAdjustButton;
         };
 
         const myAdjustFontSizeHint = () => {
-            let fontSizeAdjustButton = new Gtk.SpinButton();
-            fontSizeAdjustButton.set_range(24, 96);
-            fontSizeAdjustButton.set_increments(2, 4);
-            fontSizeAdjustButton.set_value(window._settings.get_int('hint-size'));
-            fontSizeAdjustButton.connect('value-changed', entry => {
+            fontSizeHintAdjustButton = new Gtk.SpinButton();
+            fontSizeHintAdjustButton.set_range(24, 96);
+            fontSizeHintAdjustButton.set_increments(2, 4);
+            fontSizeHintAdjustButton.set_value(window._settings.get_int('hint-size'));
+            fontSizeHintAdjustButton.connect('value-changed', entry => {
                 window._settings.set_int('hint-size', entry.get_value());
             });
 
-            return fontSizeAdjustButton;
+            return fontSizeHintAdjustButton;
         };
 
         // const myResetFontSize = () => {
@@ -61,11 +65,11 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         //     resetButton.set_label("Reset");
         //     resetButton.connect('clicked', () => {
         //         window._settings.set_int('date-size', 24);
-        //         fontSizeAdjustButton.set_value(window._settings.get_int('date-size'));
+        //       fontSizeTimeAdjustButton.set_value(window._settings.get_int('date-size'));
         //     });
         // }
 
-        const myCustomTimeText = () => {
+        const CustomTimeText = () => {
             let textUrlEntry = new Gtk.Entry();
             textUrlEntry.set_width_chars(40);
             textUrlEntry.set_placeholder_text('ex: %r - Foo Bar or Hello World');
@@ -78,7 +82,7 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
             return textUrlEntry;
         };
 
-        const myCustomDateText = () => {
+        const CustomDateText = () => {
             let textUrlEntry = new Gtk.Entry();
             textUrlEntry.set_width_chars(40);
             textUrlEntry.set_placeholder_text('ex: %r - Foo Bar or Hello World');
@@ -92,13 +96,10 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         };
 
         const addTip = () => {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL});
             let url = 'https://help.gnome.org/users/gthumb/stable/gthumb-date-formats.html.en';
             let linkButton = Gtk.LinkButton.new_with_label(url, 'Web link for valid Date/Time Format Codes');
 
-            hbox.append(linkButton);
-
-            return hbox;
+            return linkButton;
         };
 
         const customStyling = new Adw.SwitchRow({
@@ -138,12 +139,17 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         const customTimeText = new Adw.ActionRow({
             title: 'Custom Time Text',
         });
-        customTimeText.add_suffix(myCustomTimeText());
+        customTimeText.add_suffix(CustomTimeText());
 
         const customDateText = new Adw.ActionRow({
             title: 'Custom Date Text',
         });
-        customDateText.add_suffix(myCustomDateText());
+        customDateText.add_suffix(CustomDateText());
+
+        const hintRow = new Adw.ActionRow({
+            title: 'Gnome Time Date Format Help Link',
+        });
+        hintRow.add_suffix(addTip());
 
         const removeTime = new Adw.SwitchRow({
             title: 'Remove Time',
@@ -167,7 +173,7 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
 
         const customTextGroup = new Adw.PreferencesGroup({
             title: 'Custom Text Options',
-            description: 'either use gnome date time text format or type your preferred text or leave blank for default values',
+            description: 'either use gnome time date text format or type your preferred text or leave blank for default values',
         });
         page.add(customTextGroup);
 
@@ -190,7 +196,7 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
 
         customTextGroup.add(customTimeText);
         customTextGroup.add(customDateText);
-        customTextGroup.add(addTip());
+        customTextGroup.add(hintRow);
 
         window._settings.bind('custom-style', customStyling, 'active', Gio.SettingsBindFlags.DEFAULT);
         window._settings.bind('remove-time', removeTime, 'active', Gio.SettingsBindFlags.DEFAULT);
