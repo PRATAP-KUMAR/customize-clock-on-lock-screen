@@ -5,10 +5,6 @@ import Gio from 'gi://Gio';
 
 import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-let fontSizeTimeAdjustButton;
-let fontSizeDateAdjustButton;
-let fontSizeHintAdjustButton;
-
 export default class CustomizeClockExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         window._settings = this.getSettings();
@@ -20,54 +16,46 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         setButtonColor(window._dateColorButton, 'date-color');
         setButtonColor(window._hintColorButton, 'hint-color');
 
+        window._fontSizeTimeAdjustButton = new Gtk.SpinButton();
+        window._fontSizeDateAdjustButton = new Gtk.SpinButton();
+        window._fontSizeHintAdjustButton = new Gtk.SpinButton();
+
         const colorButton = (button, id) => {
             return selectButtonColor(button, id);
         };
 
-        const myAdjustFontSizeTime = () => {
-            fontSizeTimeAdjustButton = new Gtk.SpinButton();
-            fontSizeTimeAdjustButton.set_range(36, 96);
-            fontSizeTimeAdjustButton.set_increments(2, 4);
-            fontSizeTimeAdjustButton.set_value(window._settings.get_int('time-size'));
-            fontSizeTimeAdjustButton.connect('value-changed', entry => {
+        const AdjustFontSizeTime = () => {
+            window._fontSizeTimeAdjustButton.set_range(24, 96);
+            window._fontSizeTimeAdjustButton.set_increments(2, 4);
+            window._fontSizeTimeAdjustButton.set_value(window._settings.get_int('time-size'));
+            window._fontSizeTimeAdjustButton.connect('value-changed', entry => {
                 window._settings.set_int('time-size', entry.get_value());
             });
 
-            return fontSizeTimeAdjustButton;
+            return window._fontSizeTimeAdjustButton;
         };
 
-        const myAdjustFontSizeDate = () => {
-            fontSizeDateAdjustButton = new Gtk.SpinButton();
-            fontSizeDateAdjustButton.set_range(36, 96);
-            fontSizeDateAdjustButton.set_increments(2, 4);
-            fontSizeDateAdjustButton.set_value(window._settings.get_int('date-size'));
-            fontSizeDateAdjustButton.connect('value-changed', entry => {
+        const AdjustFontSizeDate = () => {
+            window._fontSizeDateAdjustButton.set_range(24, 96);
+            window._fontSizeDateAdjustButton.set_increments(2, 4);
+            window._fontSizeDateAdjustButton.set_value(window._settings.get_int('date-size'));
+            window._fontSizeDateAdjustButton.connect('value-changed', entry => {
                 window._settings.set_int('date-size', entry.get_value());
             });
 
-            return fontSizeDateAdjustButton;
+            return window._fontSizeDateAdjustButton;
         };
 
-        const myAdjustFontSizeHint = () => {
-            fontSizeHintAdjustButton = new Gtk.SpinButton();
-            fontSizeHintAdjustButton.set_range(24, 96);
-            fontSizeHintAdjustButton.set_increments(2, 4);
-            fontSizeHintAdjustButton.set_value(window._settings.get_int('hint-size'));
-            fontSizeHintAdjustButton.connect('value-changed', entry => {
+        const AdjustFontSizeHint = () => {
+            window._fontSizeHintAdjustButton.set_range(24, 96);
+            window._fontSizeHintAdjustButton.set_increments(2, 4);
+            window._fontSizeHintAdjustButton.set_value(window._settings.get_int('hint-size'));
+            window._fontSizeHintAdjustButton.connect('value-changed', entry => {
                 window._settings.set_int('hint-size', entry.get_value());
             });
 
-            return fontSizeHintAdjustButton;
+            return window._fontSizeHintAdjustButton;
         };
-
-        // const myResetFontSize = () => {
-        //     let resetButton = new Gtk.Button();
-        //     resetButton.set_label("Reset");
-        //     resetButton.connect('clicked', () => {
-        //         window._settings.set_int('date-size', 24);
-        //       fontSizeTimeAdjustButton.set_value(window._settings.get_int('date-size'));
-        //     });
-        // }
 
         const CustomTimeText = () => {
             let textUrlEntry = new Gtk.Entry();
@@ -124,17 +112,20 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         const timeFontSizeRow = new Adw.ActionRow({
             title: 'Time Size in Pixels',
         });
-        timeFontSizeRow.add_suffix(myAdjustFontSizeTime());
+        timeFontSizeRow.add_suffix(AdjustFontSizeTime());
+        timeFontSizeRow.add_suffix(ResetFontSize(window._fontSizeTimeAdjustButton, 'time-size', 24));
 
         const dateFontSizeRow = new Adw.ActionRow({
             title: 'Date Size in Pixels',
         });
-        dateFontSizeRow.add_suffix(myAdjustFontSizeDate());
+        dateFontSizeRow.add_suffix(AdjustFontSizeDate());
+        dateFontSizeRow.add_suffix(ResetFontSize(window._fontSizeDateAdjustButton, 'date-size', 24));
 
         const hintFontSizeRow = new Adw.ActionRow({
             title: 'Hint Size in Pixels',
         });
-        hintFontSizeRow.add_suffix(myAdjustFontSizeHint());
+        hintFontSizeRow.add_suffix(AdjustFontSizeHint());
+        hintFontSizeRow.add_suffix(ResetFontSize(window._fontSizeHintAdjustButton, 'hint-size', 24));
 
         const customTimeText = new Adw.ActionRow({
             title: 'Custom Time Text',
@@ -209,8 +200,8 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
 
         /**
          *
-         * @param {string} button button
-         * @param {string} id id
+         * @param {object} button 'button'
+         * @param {string} id 'id'
          */
         function setButtonColor(button, id) {
             let rgba = new Gdk.RGBA();
@@ -221,7 +212,24 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
 
         /**
          *
-         * @param {string} button 'button'
+         * @param {object} button 'reset button'
+         * @param {string} schemaId 'schema id'
+         * @param {int} resetValue 'reset value'
+         */
+        function ResetFontSize(button, schemaId, resetValue) {
+            let resetButton = new Gtk.Button();
+            resetButton.set_label('Reset');
+            resetButton.connect('clicked', () => {
+                window._settings.set_int(schemaId, resetValue);
+                button.set_value(window._settings.get_int(schemaId));
+            });
+
+            return resetButton;
+        }
+
+        /**
+         *
+         * @param {object} button 'button'
          * @param {string} id 'id'
          */
         function selectButtonColor(button, id) {
@@ -234,7 +242,7 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
 
         /**
          *
-         * @param {string } button 'button'
+         * @param {object} button 'button'
          * @param {string} id 'id'
          */
         function onPanelColorChanged(button, id) {
