@@ -26,19 +26,19 @@
     </key>
 
     <key name="time-size" type="i">
-      <default>72</default>
+      <default>96</default>
       <summary>time-font-size</summary>
       <description></description>
     </key>
 
     <key name="date-size" type="i">
-      <default>36</default>
+      <default>27</default>
       <summary>date-font-size</summary>
       <description></description>
     </key>
 
     <key name="hint-size" type="i">
-      <default>24</default>
+      <default>20</default>
       <summary>hint-font-size</summary>
       <description></description>
     </key>

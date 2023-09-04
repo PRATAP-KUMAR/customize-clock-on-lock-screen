@@ -47,7 +47,7 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         };
 
         const AdjustFontSizeHint = () => {
-            window._fontSizeHintAdjustButton.set_range(24, 96);
+            window._fontSizeHintAdjustButton.set_range(20, 96);
             window._fontSizeHintAdjustButton.set_increments(2, 4);
             window._fontSizeHintAdjustButton.set_value(window._settings.get_int('hint-size'));
             window._fontSizeHintAdjustButton.connect('value-changed', entry => {
@@ -113,19 +113,19 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
             title: 'Time Size in Pixels',
         });
         timeFontSizeRow.add_suffix(AdjustFontSizeTime());
-        timeFontSizeRow.add_suffix(ResetFontSize(window._fontSizeTimeAdjustButton, 'time-size', 24));
+        timeFontSizeRow.add_suffix(ResetFontSize(window._fontSizeTimeAdjustButton, 'time-size', 96));
 
         const dateFontSizeRow = new Adw.ActionRow({
             title: 'Date Size in Pixels',
         });
         dateFontSizeRow.add_suffix(AdjustFontSizeDate());
-        dateFontSizeRow.add_suffix(ResetFontSize(window._fontSizeDateAdjustButton, 'date-size', 24));
+        dateFontSizeRow.add_suffix(ResetFontSize(window._fontSizeDateAdjustButton, 'date-size', 27));
 
         const hintFontSizeRow = new Adw.ActionRow({
             title: 'Hint Size in Pixels',
         });
         hintFontSizeRow.add_suffix(AdjustFontSizeHint());
-        hintFontSizeRow.add_suffix(ResetFontSize(window._fontSizeHintAdjustButton, 'hint-size', 24));
+        hintFontSizeRow.add_suffix(ResetFontSize(window._fontSizeHintAdjustButton, 'hint-size', 20));
 
         const customTimeText = new Adw.ActionRow({
             title: 'Custom Time Text',
