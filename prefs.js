@@ -20,10 +20,6 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         window._fontSizeDateAdjustButton = new Gtk.SpinButton();
         window._fontSizeHintAdjustButton = new Gtk.SpinButton();
 
-        const colorButton = (button, id) => {
-            return selectButtonColor(button, id);
-        };
-
         const AdjustFontSizeTime = () => {
             window._fontSizeTimeAdjustButton.set_range(24, 96);
             window._fontSizeTimeAdjustButton.set_increments(2, 4);
@@ -97,17 +93,17 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         const timeColorRow = new Adw.ActionRow({
             title: 'Time font color',
         });
-        timeColorRow.add_suffix(colorButton(window._timeColorButton, 'time-color'));
+        timeColorRow.add_suffix(selectButtonColor(window._timeColorButton, 'time-color'));
 
         const dateColorRow = new Adw.ActionRow({
             title: 'Date font color',
         });
-        dateColorRow.add_suffix(colorButton(window._dateColorButton, 'date-color'));
+        dateColorRow.add_suffix(selectButtonColor(window._dateColorButton, 'date-color'));
 
         const hintColorRow = new Adw.ActionRow({
             title: 'Hint font color',
         });
-        hintColorRow.add_suffix(colorButton(window._hintColorButton, 'hint-color'));
+        hintColorRow.add_suffix(selectButtonColor(window._hintColorButton, 'hint-color'));
 
         const timeFontSizeRow = new Adw.ActionRow({
             title: 'Time Size in Pixels',
@@ -168,14 +164,14 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         });
         page.add(customTextGroup);
 
-        const group = new Adw.PreferencesGroup({
+        const removeGroup = new Adw.PreferencesGroup({
             title: 'Remove Options',
         });
-        page.add(group);
+        page.add(removeGroup);
 
-        group.add(removeTime);
-        group.add(removeDate);
-        group.add(removeHint);
+        removeGroup.add(removeTime);
+        removeGroup.add(removeDate);
+        removeGroup.add(removeHint);
 
         customStyleGroup.add(customStyling);
         customStyleGroup.add(timeColorRow);
@@ -233,11 +229,9 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
          * @param {string} id 'id'
          */
         function selectButtonColor(button, id) {
-            let hbox = new Gtk.Box({orientation: Gtk.Orientation.HORIZONTAL, halign: Gtk.Align.END});
             button.connect('notify::rgba', () => onPanelColorChanged(button, id));
-            hbox.append(button);
 
-            return hbox;
+            return button;
         }
 
         /**

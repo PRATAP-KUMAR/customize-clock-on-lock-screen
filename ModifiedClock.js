@@ -59,6 +59,7 @@ const ModifiedClock = GObject.registerClass(
             if (!removeTime)
                 this.add_child(this._time);
 
+
             if (!removeDate)
                 this.add_child(this._date);
 
@@ -120,6 +121,7 @@ const ModifiedClock = GObject.registerClass(
         }
 
         _onDestroy() {
+            this._wallClock = null;
             this._idleMonitor.remove_watch(this._idleWatchId);
         }
     }
