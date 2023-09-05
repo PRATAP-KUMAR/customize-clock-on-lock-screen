@@ -7,7 +7,6 @@ export default class CustomizeClockOnLockScreenExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
         this._dialog = Main.screenShield._dialog;
-        this._originalClock = this._dialog._clock;
 
         this._dialog._stack.remove_child(this._dialog._clock);
         this._dialog._clock = new ModifiedClock(this._settings);
@@ -18,10 +17,6 @@ export default class CustomizeClockOnLockScreenExtension extends Extension {
     // unlock-dialog is used in session-modes because this extension purpose is
     // to tweak the clock on lock screen itself.
     disable() {
-        this._dialog._stack.remove_child(this._dialog._clock);
-        this._dialog._clock.destroy();
-        this._dialog._stack.add_child(this._originalClock);
-        this._dialog._clock = null;
         this._dialog = null;
         this._settings = null;
     }
