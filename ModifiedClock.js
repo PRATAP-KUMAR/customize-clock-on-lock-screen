@@ -59,7 +59,6 @@ const ModifiedClock = GObject.registerClass(
             if (!removeTime)
                 this.add_child(this._time);
 
-
             if (!removeDate)
                 this.add_child(this._date);
 
@@ -87,26 +86,24 @@ const ModifiedClock = GObject.registerClass(
 
             this._updateClock();
             this._updateHint();
-
-            this.connect('destroy', this._onDestroy.bind(this));
         }
 
         _updateClock() {
             let date = new Date();
             let dateFormat = Shell.util_translate_time_string('%A %B %-d');
 
-            let customizeTime = this._settings.get_string('custom-time-text');
+            let customizeClock = this._settings.get_string('custom-time-text');
             let customizeDate = this._settings.get_string('custom-date-text');
 
-            let customTimeFormat = Shell.util_translate_time_string(customizeTime);
+            let timeFormat = Shell.util_translate_time_string(customizeClock);
             let customDateFormat = Shell.util_translate_time_string(customizeDate);
 
-            if (customizeTime === '')
+            if (customizeClock === '')
                 this._time.text = this._wallClock.clock;
-            else if (customizeTime.startsWith('%'))
-                this._time.text = formatDateWithCFormatString(date, customTimeFormat);
+            else if (customizeClock.startsWith('%'))
+                this._time.text = formatDateWithCFormatString(date, timeFormat);
             else
-                this._time.text = customizeTime;
+                this._time.text = customizeClock;
 
             if (customizeDate === '')
                 this._date.text = formatDateWithCFormatString(date, dateFormat);
