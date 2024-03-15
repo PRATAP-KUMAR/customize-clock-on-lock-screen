@@ -1,5 +1,5 @@
 {
-  "devDependencies": {
-    "eslint-plugin-jsdoc": "^46.5.1"
+  "dependencies": {
+    "eslint-plugin-jsdoc": "^48.2.1"
   }
 }

@@ -21,7 +21,8 @@ export default class CustomizeClockOnLockScreenExtension extends Extension {
     disable() {
         this._dialog._stack.remove_child(this._dialog._clock);
         this._dialog._stack.add_child(this._originalClock);
-        this._originalClock.hide();
+        this._dialog._clock.destroy();
+        this._dialog._clock = null;
         this._dialog = null;
         this._settings = null;
     }
