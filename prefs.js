@@ -4,6 +4,7 @@ import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 
 import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import FontsPrefsWidget from './utils/fontsPreferencesWidget.js';
 
 export default class CustomizeClockExtensionPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
@@ -168,14 +169,18 @@ export default class CustomizeClockExtensionPreferences extends ExtensionPrefere
         });
         page.add(customTextGroup);
 
-        const group = new Adw.PreferencesGroup({
+        const removeGroup = new Adw.PreferencesGroup({
             title: 'Remove Options',
         });
-        page.add(group);
+        page.add(removeGroup);
 
-        group.add(removeTime);
-        group.add(removeDate);
-        group.add(removeHint);
+        // fonts group
+        page.add(new FontsPrefsWidget(window._settings));
+        //
+
+        removeGroup.add(removeTime);
+        removeGroup.add(removeDate);
+        removeGroup.add(removeHint);
 
         customStyleGroup.add(customStyling);
         customStyleGroup.add(timeColorRow);

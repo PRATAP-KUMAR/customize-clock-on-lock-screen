@@ -73,5 +73,9 @@
       <description></description>
     </key>
 
+    <key name="name" type="s">
+      <default>''</default>
+    </key>
+
   </schema>
 </schemalist>

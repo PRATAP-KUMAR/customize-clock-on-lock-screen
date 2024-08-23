@@ -24,7 +24,9 @@ const ModifiedClock = GObject.registerClass(
 
             this._time.set_style(customStyle
                 ? `color: ${this._settings.get_string('time-color')};
-                        font-size: ${this._settings.get_int('time-size')}px`
+                        font-size: ${this._settings.get_int('time-size')}px;
+                        font-family: ${this._settings.get_string('name')}, serif;
+                        `
                 : null
             );
 
@@ -35,7 +37,9 @@ const ModifiedClock = GObject.registerClass(
 
             this._date.set_style(customStyle
                 ? `color: ${this._settings.get_string('date-color')};
-                        font-size: ${this._settings.get_int('date-size')}px`
+                        font-size: ${this._settings.get_int('date-size')}px;
+                        font-family: ${this._settings.get_string('name')}, serif;
+                        `
                 : null
             );
 
@@ -48,7 +52,9 @@ const ModifiedClock = GObject.registerClass(
             this._hint.set_style(
                 customStyle
                     ? `color: ${this._settings.get_string('hint-color')};
-                        font-size: ${this._settings.get_int('hint-size')}px`
+                        font-size: ${this._settings.get_int('hint-size')}px;
+                        font-family: ${this._settings.get_string('name')}, serif;
+                        `
                     : null
             );
 
@@ -86,6 +92,16 @@ const ModifiedClock = GObject.registerClass(
 
             this._updateClock();
             this._updateHint();
+        }
+
+        _changeFont() {
+            this._time.set_style(this._settings.get_boolean('custom-style')
+                ? `color: ${this._settings.get_string('time-color')};
+                font-size: ${this._settings.get_int('time-size')}px;
+                font-family: ${this._settings.get_string('name')} serif;
+                `
+                : null
+            );
         }
 
         _updateClock() {
