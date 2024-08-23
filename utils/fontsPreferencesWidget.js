@@ -29,11 +29,11 @@ class FontsPrefsWidget extends Adw.PreferencesGroup {
         super({title: 'Fonts'});
 
         this._actionGroup = new Gio.SimpleActionGroup();
-        this.insert_action_group('theme', this._actionGroup);
+        this.insert_action_group('font', this._actionGroup);
 
         this._settings = settings;
         this._actionGroup.add_action(
-            this._settings.create_action('name'));
+            this._settings.create_action('font-style'));
 
         this.connect('destroy', () => (this._settings = null));
 
@@ -70,12 +70,12 @@ class FontRow extends Adw.ActionRow {
 
     constructor(name) {
         const check = new Gtk.CheckButton({
-            action_name: 'theme.name',
+            action_name: 'font.font-style',
             action_target: new GLib.Variant('s', name),
         });
 
         super({
-            title: name || 'Default',
+            title: name,
             activatable_widget: check,
         });
         this.add_prefix(check);

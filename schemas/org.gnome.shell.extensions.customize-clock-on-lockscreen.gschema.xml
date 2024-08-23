@@ -73,8 +73,8 @@
       <description></description>
     </key>
 
-    <key name="name" type="s">
-      <default>''</default>
+    <key name="font-style" type="s">
+      <default>'Cantarell'</default>
     </key>
 
   </schema>
