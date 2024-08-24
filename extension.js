@@ -23,7 +23,6 @@ export default class CustomizeClockOnLockScreenExtension extends Extension {
         this._dialog._stack.remove_child(this._dialog._clock);
         this._dialog._stack.add_child(this._originalClock);
         this._dialog._clock._onDestroy();
-        this._dialog._clock.destory;
         this._dialog._clock = null;
         this._dialog = null;
 

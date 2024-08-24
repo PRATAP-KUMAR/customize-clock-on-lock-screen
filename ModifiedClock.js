@@ -15,14 +15,16 @@ const ModifiedClock = GObject.registerClass(
             super._init({style_class: 'unlock-dialog-clock', vertical: true});
 
             this._settings = settings;
-            let customStyle = this._settings.get_boolean('custom-style');
+            this._customStyle = this._settings.get_boolean('custom-style');
+            this._customizeClock = this._settings.get_string('custom-time-text');
+            this._customizeDate = this._settings.get_string('custom-date-text');
 
             this._time = new St.Label({
-                style_class: customStyle ? null : 'unlock-dialog-clock-time',
+                style_class: this._customStyle ? null : 'unlock-dialog-clock-time',
                 x_align: Clutter.ActorAlign.CENTER,
             });
 
-            this._time.set_style(customStyle
+            this._time.set_style(this._customStyle
                 ? `color: ${this._settings.get_string('time-color')};
                         font-size: ${this._settings.get_int('time-size')}px;
                         font-family: ${this._settings.get_string('font-style')}, serif;
@@ -31,11 +33,11 @@ const ModifiedClock = GObject.registerClass(
             );
 
             this._date = new St.Label({
-                style_class: customStyle ? null : 'unlock-dialog-clock-date',
+                style_class: this._customStyle ? null : 'unlock-dialog-clock-date',
                 x_align: Clutter.ActorAlign.CENTER,
             });
 
-            this._date.set_style(customStyle
+            this._date.set_style(this._customStyle
                 ? `color: ${this._settings.get_string('date-color')};
                         font-size: ${this._settings.get_int('date-size')}px;
                         font-family: ${this._settings.get_string('font-style')}, serif;
@@ -44,13 +46,13 @@ const ModifiedClock = GObject.registerClass(
             );
 
             this._hint = new St.Label({
-                style_class: customStyle ? null : 'unlock-dialog-clock-hint',
+                style_class: this._customStyle ? null : 'unlock-dialog-clock-hint',
                 x_align: Clutter.ActorAlign.CENTER,
                 opacity: 0,
             });
 
             this._hint.set_style(
-                customStyle
+                this._customStyle
                     ? `color: ${this._settings.get_string('hint-color')};
                         font-size: ${this._settings.get_int('hint-size')}px;
                         font-family: ${this._settings.get_string('font-style')}, serif;
@@ -98,25 +100,22 @@ const ModifiedClock = GObject.registerClass(
             let date = new Date();
             let dateFormat = Shell.util_translate_time_string('%A %B %-d');
 
-            let customizeClock = this._settings.get_string('custom-time-text');
-            let customizeDate = this._settings.get_string('custom-date-text');
+            let timeFormat = Shell.util_translate_time_string(this._customizeClock);
+            let customDateFormat = Shell.util_translate_time_string(this._customizeDate);
 
-            let timeFormat = Shell.util_translate_time_string(customizeClock);
-            let customDateFormat = Shell.util_translate_time_string(customizeDate);
-
-            if (customizeClock === '')
+            if (!this._customizeClock)
                 this._time.text = this._wallClock.clock;
-            else if (customizeClock.startsWith('%'))
+            else if (this._customizeClock.startsWith('%'))
                 this._time.text = formatDateWithCFormatString(date, timeFormat);
             else
-                this._time.text = customizeClock;
+                this._time.text = this._customizeClock;
 
-            if (customizeDate === '')
+            if (!this._customizeDate)
                 this._date.text = formatDateWithCFormatString(date, dateFormat);
-            else if (customizeDate.startsWith('%'))
+            else if (this._customizeDate.startsWith('%'))
                 this._date.text = formatDateWithCFormatString(date, customDateFormat);
             else
-                this._date.text = customizeDate;
+                this._date.text = this._customizeDate;
         }
 
         _updateHint() {
