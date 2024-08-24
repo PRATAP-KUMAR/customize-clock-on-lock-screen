@@ -48,7 +48,8 @@ class FontsPrefsWidget extends Adw.PreferencesGroup {
                 await recursiveFileOperation(dir, recursiveGetFileNamesCallback, fontNames, 'fonts');
         }
         const modified = fontNames
-            .filter(name => name.trim().endsWith('.ttf') || name.trim().endsWith('.otf')) // get only font files
+            .map(name => name.trim()) // remove white spaces if any
+            .filter(name => name.endsWith('.ttf') || name.endsWith('.otf')) // get only font files
             .map(name => name.slice(0, -4)) // remove file extension
             .map(s => s.split('-')[0]) // remove hypen and after
             .map(s => s.split(/(?<=[a-z])(?=[A-Z])/).join(' ')); // based on Font naming convention split the strig with Capital letters
