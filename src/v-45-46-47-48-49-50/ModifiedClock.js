@@ -225,28 +225,59 @@ const ModifiedClock = GObject.registerClass(
                 () => (this._hint.opacity = 0), this);
 
             this._idleMonitor = global.backend.get_core_idle_monitor();
+
             this._idleWatchId = this._idleMonitor.add_idle_watch(HINT_TIMEOUT * 1000, () => {
                 this._hint.ease({
                     opacity: 255,
                     duration: CROSSFADE_TIME,
                 });
             });
-            this._clockTickId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 1, () => {
-                this._updateClock();
-                return GLib.SOURCE_CONTINUE;
-            });
+
+            this._clockTickId = GLib.timeout_add_seconds(
+                GLib.PRIORITY_DEFAULT,
+                1,
+                () => {
+                    this._updateClock();
+                    return GLib.SOURCE_CONTINUE;
+                }
+            );
+
+            this._commandTickId = GLib.timeout_add_seconds(
+                GLib.PRIORITY_DEFAULT,
+                1,
+                () => {
+                    const command = this._settings.get_string('command');
+                    const removeCustomCommand =
+                        this._settings.get_boolean('remove-command-output');
+
+                    if (!removeCustomCommand && command)
+                        this._createCommandText();
+
+                    return GLib.SOURCE_CONTINUE;
+                }
+            );
 
             this._updateClock();
             this._updateHint();
         }
 
         async _createCommandText() {
+            if (this._commandRunning)
+                return;
+
+            this._commandRunning = true;
+
             try {
-                const text = await execCommunicate(this._settings.get_string('command').split(' '));
-                this._commandOutput.text = text;
+                const text = await execCommunicate(
+                    this._settings.get_string('command').split(' ')
+                );
+
+                this._commandOutput.text = text.trim();
             } catch (e) {
                 console.log(e);
                 this._commandOutput.text = 'Sorry Command Output has thrown error';
+            } finally {
+                this._commandRunning = false;
             }
         }
 
@@ -583,6 +614,11 @@ const ModifiedClock = GObject.registerClass(
             if (this._clockTickId) {
                 GLib.source_remove(this._clockTickId);
                 this._clockTickId = null;
+            }
+
+            if (this._commandTickId) {
+                GLib.source_remove(this._commandTickId);
+                this._commandTickId = null;
             }
 
             if (this._analogAreaConnectId) {
