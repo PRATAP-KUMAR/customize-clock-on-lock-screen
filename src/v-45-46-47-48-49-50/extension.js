@@ -11,30 +11,41 @@ export default class CustomizeClockOnLockScreenExtension extends Extension {
         let {width} = primaryMonitor;
 
         this._settings = this.getSettings();
-        this._dialog = Main.screenShield._dialog;
-        this._originalClock = this._dialog._clock;
+        this._dialog = Main.screenShield?._dialog ?? null;
+        this._dialogStack = this._dialog?._stack ?? null;
+        this._promptBox = this._dialog?._promptBox ?? null;
+        this._originalClock = this._dialog?._clock ?? null;
 
-        if (this._dialog) {
-            this._dialog._stack.remove_child(this._dialog._clock);
-            this._dialog._clock = new ModifiedClock(this._settings, width);
-            this._dialog._clock.set_pivot_point(0.5, 0.5);
-            this._dialog._stack.add_child(this._dialog._clock);
+        if (!this._dialog || !this._dialogStack || !this._originalClock)
+            return;
 
-            this._dialog._promptBox.set_y_align(Clutter.ActorAlign.CENTER);
-        }
+        this._dialogStack.remove_child(this._originalClock);
+        this._dialog._clock = new ModifiedClock(this._settings, width);
+        this._dialog._clock.set_pivot_point(0.5, 0.5);
+        this._dialogStack.add_child(this._dialog._clock);
+
+        this._promptBox?.set_y_align(Clutter.ActorAlign.CENTER);
     }
 
     disable() {
+        if (!this._dialog || !this._dialogStack || !this._originalClock) {
+            this._settings = null;
+            return;
+        }
+
         // unlock-dialog is used in session-modes because this extension purpose is
         // to tweak the clock on lock screen itself.
-        this._dialog._stack.remove_child(this._dialog._clock);
-        this._dialog._stack.add_child(this._originalClock);
+        this._dialogStack.remove_child(this._dialog._clock);
+        this._dialogStack.add_child(this._originalClock);
 
-        this._dialog._promptBox.set_y_align(Clutter.ActorAlign.DEFAULT);
+        this._promptBox?.set_y_align(Clutter.ActorAlign.DEFAULT);
 
         this._dialog._clock.destroy();
         this._dialog._clock = null;
+        this._dialogStack = null;
+        this._promptBox = null;
         this._dialog = null;
+        this._originalClock = null;
 
         this._settings = null;
     }

@@ -6,6 +6,7 @@
   },
   "name": "Customize Clock on Lock Screen",
   "session-modes": [
+    "user",
     "unlock-dialog"
   ],
   "settings-schema": "org.gnome.shell.extensions.customize-clock-on-lockscreen",
@@ -19,5 +20,5 @@
   ],
   "url": "https://github.com/pratap-panabaka/gse-customize-clock-on-lock-screen",
   "uuid": "CustomizeClockOnLockScreen@pratap.fastmail.fm",
-  "version": 25
+  "version": 26
 }

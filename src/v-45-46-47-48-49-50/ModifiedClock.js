@@ -610,7 +610,15 @@ const ModifiedClock = GObject.registerClass(
         }
 
         destroy() {
-            this._idleMonitor.remove_watch(this._idleWatchId);
+            if (this._idleMonitor && this._idleWatchId) {
+                try {
+                    this._idleMonitor.remove_watch(this._idleWatchId);
+                } catch {
+                    // ignore
+                }
+                this._idleWatchId = null;
+            }
+
             if (this._clockTickId) {
                 GLib.source_remove(this._clockTickId);
                 this._clockTickId = null;
@@ -623,18 +631,20 @@ const ModifiedClock = GObject.registerClass(
 
             if (this._analogAreaConnectId) {
                 this._analogArea.disconnect(this._analogAreaConnectId);
+                this._analogAreaConnectId = null;
             }
 
             if (this._ledAreaConnectId) {
                 this._ledArea.disconnect(this._ledAreaConnectId);
+                this._ledAreaConnectId = null;
             }
 
             if (this._wallClockConnectId) {
                 this._wallClock.disconnect(this._wallClockConnectId);
+                this._wallClockConnectId = null;
             }
 
-            if (this._)
-                super.destroy();
+            super.destroy();
         }
     }
 );
